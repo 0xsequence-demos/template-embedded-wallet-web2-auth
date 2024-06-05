@@ -4,7 +4,6 @@ import sequence from './SequenceEmbeddedWallet'
 import { useSessionHash } from './useSessionHash'
 import { CredentialResponse, GoogleLogin } from '@react-oauth/google';
 import AppleSignin from 'react-apple-signin-auth';
-import playImage from './assets/play.svg'
 
 function LoginScreen () {
   const { sessionHash } = useSessionHash()
