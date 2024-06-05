@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
+import './App.css'
 import sequence from './SequenceEmbeddedWallet'
 import { useSessionHash } from './useSessionHash'
 import { CredentialResponse, GoogleLogin } from '@react-oauth/google';
 import AppleSignin from 'react-apple-signin-auth';
-import './App.css'
 import playImage from './assets/play.svg'
 
 function LoginScreen () {
@@ -15,14 +15,14 @@ function LoginScreen () {
 
   const handleGoogleLogin = async (tokenResponse: CredentialResponse) => {
     const res = await sequence.signIn({
-      idToken: tokenResponse.credential!
+      idToken: tokenResponse.credential! // inputted id credential from google
     }, "template")
     setWallet(res.wallet)
   }
 
   const handleAppleLogin = async (response: any) => {
     const res = await sequence.signIn({
-      idToken: response.authorization.id_token!
+      idToken: response.authorization.id_token! // inputted id token from apple
     }, "template")
  
     setWallet(res.wallet)
@@ -30,7 +30,6 @@ function LoginScreen () {
 
   useEffect(() => {
     setTimeout(async () => {
-      console.log(await sequence.isSignedIn())
       if(await sequence.isSignedIn()){
         setWallet(await sequence.getAddress())
       }
