@@ -82,11 +82,10 @@ span.mint-generation:hover + .play-image-mint {
 
 .gmail-login,
 .apple-login{ 
-  cursor: pointer;
   display: inline-block; /* Show the image on hover */
+
   /* position: relative; Ensure the parent container is positioned */
 }
-
 .play-image-gmail,
 .play-image-apple{
   display: inline-block; /* Show the image on hover */
@@ -159,6 +158,7 @@ svg {
   color: grey;
   position: absolute;
   margin-top: -30px;
+  margin-left: -13px;
   width: 100%;
   text-align: center;
 }

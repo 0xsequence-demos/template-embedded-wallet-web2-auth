@@ -10,8 +10,6 @@ function LoginScreen () {
   const { sessionHash } = useSessionHash()
 
   const [wallet, setWallet] = useState<any>(null)
-  const [googleHover, setGoogleHover] = useState(false)
-  const [appleHover, setAppleHover] = useState(false)
 
   const handleGoogleLogin = async (tokenResponse: CredentialResponse) => {
     const res = await sequence.signIn({
@@ -38,7 +36,19 @@ function LoginScreen () {
 
   useEffect(() => {
 
-  }, [googleHover, appleHover, wallet])
+  }, [wallet])
+
+  const signOut = async () => {
+    try {
+      const sessions = await sequence.listSessions()
+
+      for(let i = 0; i < sessions.length; i++){
+        await sequence.dropSession({ sessionId: sessions[i].id })
+      }
+    }catch(err){
+      console.log(err)
+    }
+  }
 
   return (
     <>
@@ -53,21 +63,17 @@ function LoginScreen () {
           <div className="login-container">
           <div className='dashed-box-google'>
               <p className='content'>
-                <div className='gmail-login' onMouseLeave={() => setGoogleHover(false)} onMouseEnter={() => {setGoogleHover(true)}} style={{overflow: 'hidden', opacity: '0',width: '90px', position: 'absolute', zIndex: 1, height: '100px'}}>
-                  {
-                  googleHover && <GoogleLogin 
+                <div className='gmail-login' style={{overflow: 'hidden', opacity: '0',width: '90px', position: 'absolute', zIndex: 1, height: '100px'}}>
+                  <GoogleLogin 
                     nonce={sessionHash}
                     key={sessionHash}
-                    onSuccess={handleGoogleLogin} shape="circle" width={230} /> }
+                    onSuccess={handleGoogleLogin} shape="circle" width={230} />
                   </div>
                   <span className='gmail-login'>Gmail</span>
-                  {googleHover && <img src={playImage} alt="Play" className="play-image-gmail" />}
               </p>
           </div>
           <div className='dashed-box-apple'>
             <p className='content' 
-            onMouseLeave={() => setAppleHover(false)} 
-            onMouseEnter={() => {setAppleHover(true)}}
             style={{position:'relative'}}>
                 <span className='apple-login'>
                   {/* @ts-ignore */}
@@ -84,13 +90,18 @@ function LoginScreen () {
                     onSuccess={handleAppleLogin}
                   />Apple
                 </span>
-                {appleHover && <img src={playImage} alt="Play" className="play-image-apple" />}
             </p>
             </div>
           </div>
         </>
       : 
-        <p>{wallet}</p>
+        <>
+          <div className="login-container">
+          <p style={{cursor: 'pointer'}} onClick={() =>signOut()}>sign out</p>
+          &nbsp;&nbsp;&nbsp;
+          <span >{wallet}</span>
+          </div>
+        </>
       }
     </>
   )
