@@ -16,14 +16,14 @@ function LoginScreen () {
   const handleGoogleLogin = async (tokenResponse: CredentialResponse) => {
     const res = await sequence.signIn({
       idToken: tokenResponse.credential!
-    }, "Dungeon Minter")
+    }, "template")
     setWallet(res.wallet)
   }
 
   const handleAppleLogin = async (response: any) => {
     const res = await sequence.signIn({
       idToken: response.authorization.id_token!
-    }, "Dungeon Minter")
+    }, "template")
  
     setWallet(res.wallet)
   }
