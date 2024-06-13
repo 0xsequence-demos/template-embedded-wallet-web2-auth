@@ -5,14 +5,122 @@ import { useSessionHash } from './useSessionHash'
 import { CredentialResponse, GoogleLogin } from '@react-oauth/google';
 import AppleSignin from 'react-apple-signin-auth';
 
+// Auth.js
+import { UserManager } from 'oidc-client';
+
+const oidcConfig = {
+  authority: "https://accounts.google.com",
+  client_id: "976261990624-2l23e456k1omvqkujclrjeniuftdj6g3.apps.googleusercontent.com",
+  redirect_uri: "http://localhost:5173/callback",
+  response_type: "id_token token",
+  scope: "openid profile email",
+};
+
+const userManager = new UserManager(oidcConfig);
+
+const Auth = () => {
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    userManager.getUser().then((user) => {
+      if (user) {
+        console.log(user)
+        setUser(user);
+      }
+    });
+  }, []);
+
+  const login = async () => {
+    count = 0
+    await userManager.signinRedirect();
+    userManager.getUser().then((user) => {
+      if (user) {
+        console.log(user)
+        setUser(user);
+      }
+    });
+  };
+
+  const logout = () => {
+    userManager.signoutRedirect();
+  };
+
+  return (
+    <div>
+      {user ? (
+        <div>
+          <h3>Welcome, {user.profile.name}</h3>
+          <button onClick={logout}>Logout</button>
+        </div>
+      ) : (
+        <button onClick={login}>Login with Google</button>
+      )}
+    </div>
+  );
+};
+
+let count = 0
 function LoginScreen () {
   const { sessionHash } = useSessionHash()
 
   const [wallet, setWallet] = useState<any>(null)
 
+  useEffect(() => {
+    if(count == 0){
+      count ++
+
+    try {
+      setTimeout(async () => {
+
+        const currentUrl = window.location.href;
+    
+        // Step 2: Parse the URL using the URL constructor
+        const url = new URL(currentUrl);
+    
+        // Step 3: Extract the hash part of the URL (everything after #)
+        const hash = url.hash.substring(1);
+    
+        // Step 4: Parse the hash parameters
+        const params = new URLSearchParams(hash);
+    
+        // Step 5: Get the id_token from the parameters
+        const idToken = params.get('id_token');
+    
+        console.log('ID Token:', idToken);
+    
+        if(idToken){
+          const res = await sequence.signIn({
+            idToken: idToken!,
+          }, "template")
+          console.log(res.wallet)
+          setWallet(res.wallet)
+    
+          
+        }
+    
+        }, 0)
+    }catch(err){
+      try {
+        setTimeout(async () => {
+
+        const sessions = await sequence.listSessions()
+  
+        for(let i = 0; i < sessions.length; i++){
+          await sequence.dropSession({ sessionId: sessions[i].id })
+        }
+      }, 0)
+
+      }catch(err){
+        console.log(err)
+      }
+    }
+
+    }
+  }, [])
+
   const handleGoogleLogin = async (tokenResponse: CredentialResponse) => {
     const res = await sequence.signIn({
-      idToken: tokenResponse.credential! // inputted id credential from google
+      idToken: tokenResponse.credential!,
     }, "template")
     setWallet(res.wallet)
   }
@@ -55,6 +163,7 @@ function LoginScreen () {
         !wallet 
       ? 
         <>
+          <Auth/>
           <span className='sign-in-via'>SIGN IN VIA</span>
           <br/>
           <br/>

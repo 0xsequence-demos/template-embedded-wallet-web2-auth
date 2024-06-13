@@ -12,6 +12,7 @@
   "dependencies": {
     "@0xsequence/waas": "^1.9.29",
     "@react-oauth/google": "^0.12.1",
+    "oidc-client": "^1.11.5",
     "react": "^18.2.0",
     "react-apple-signin-auth": "^1.1.0",
     "react-dom": "^18.2.0"
